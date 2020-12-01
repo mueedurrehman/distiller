@@ -312,6 +312,8 @@ def init_classifier_compression_arg_parser(include_ptq_lapq_args=False):
                         help='Load a model without DataParallel wrapping it')
     parser.add_argument('--thinnify', dest='thinnify', action='store_true', default=False,
                         help='physically remove zero-filters and create a smaller model')
+    parser.add_argument('--nesterov', dest='nesterov', action='store_true', default=False,
+                        help='use Nesterov momentum for SGD')
     distiller.quantization.add_post_train_quant_args(parser, add_lapq_args=include_ptq_lapq_args)
     return parser
 
@@ -407,7 +409,7 @@ def _init_learner(args):
 
     if optimizer is None and not args.evaluate:
         optimizer = torch.optim.SGD(model.parameters(), lr=args.lr,
-                                    momentum=args.momentum, weight_decay=args.weight_decay)
+                                    momentum=args.momentum, weight_decay=args.weight_decay, nesterov = args.nesterov)
         msglogger.debug('Optimizer Type: %s', type(optimizer))
         msglogger.debug('Optimizer Args: %s', optimizer.defaults)
 
