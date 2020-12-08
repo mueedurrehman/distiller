@@ -75,7 +75,10 @@ class ClassifierCompressor(object):
         self.train_loader, self.val_loader, self.test_loader = (None, None, None)
         self.activations_collectors = create_activation_stats_collectors(
             self.model, *self.args.activation_stats)
-        self.performance_tracker = apputils.SparsityAccuracyTracker(self.args.num_best_scores)
+        if args.prioritizeAccuracy:
+            self.performance_tracker = apputils.AccuracyTracker(self.args.num_best_scores)
+        else:
+            self.performance_tracker = apputils.SparsityAccuracyTracker(self.args.num_best_scores)
     
     def load_datasets(self):
         """Load the datasets"""
@@ -314,6 +317,8 @@ def init_classifier_compression_arg_parser(include_ptq_lapq_args=False):
                         help='physically remove zero-filters and create a smaller model')
     parser.add_argument('--nesterov', dest='nesterov', action='store_true', default=False,
                         help='use Nesterov momentum for SGD')
+    parser.add_argument('--prioritizeAccuracy', dest='nesterov', action='store_true', default=False,
+                        help='prioritize accuracy over sparsity for performance tracking')
     distiller.quantization.add_post_train_quant_args(parser, add_lapq_args=include_ptq_lapq_args)
     return parser
 
@@ -986,7 +991,7 @@ def _log_best_scores(performance_tracker, logger, how_many=-1):
 
     This function is currently written for pruning use-cases, but can be generalized.
     """
-    assert isinstance(performance_tracker, (apputils.SparsityAccuracyTracker))
+    # assert isinstance(performance_tracker, (apputils.TrainingPerformanceTracker))
     if how_many < 1:
         how_many = performance_tracker.max_len
     how_many = min(how_many, performance_tracker.max_len)

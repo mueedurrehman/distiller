@@ -19,13 +19,13 @@
 import operator
 import distiller
 
-
 __all__ = ["TrainingPerformanceTracker",
-           "SparsityAccuracyTracker"]
+           "SparsityAccuracyTracker", "AccuracyTracker"]
 
 
 class TrainingPerformanceTracker(object):
     """Base class for performance trackers using Top1 and Top5 accuracy metrics"""
+
     def __init__(self, num_best_scores):
         self.perf_scores_history = []
         self.max_len = num_best_scores
@@ -53,6 +53,7 @@ class SparsityAccuracyTracker(TrainingPerformanceTracker):
 
     Expects 'top1' and 'top5' to appear in the kwargs.
     """
+
     def step(self, model, epoch, **kwargs):
         assert all(score in kwargs.keys() for score in ('top1', 'top5'))
         model_sparsity, _, params_nnz_cnt = distiller.model_params_stats(model)
@@ -65,4 +66,25 @@ class SparsityAccuracyTracker(TrainingPerformanceTracker):
         # Keep perf_scores_history sorted from best to worst
         self.perf_scores_history.sort(
             key=operator.attrgetter('params_nnz_cnt', 'top1', 'top5', 'epoch'),
+            reverse=True)
+
+
+class AccuracyTracker(TrainingPerformanceTracker):
+    """A performance tracker which prioritizes accuracy only.
+
+    Expects 'top1' and 'top5' to appear in the kwargs.
+    """
+
+    def step(self, model, epoch, **kwargs):
+        assert all(score in kwargs.keys() for score in ('top1', 'top5'))
+        model_sparsity, _, params_nnz_cnt = distiller.model_params_stats(model)
+        self.perf_scores_history.append(distiller.MutableNamedTuple({
+            'params_nnz_cnt': -params_nnz_cnt,
+            'sparsity': model_sparsity,
+            'top1': kwargs['top1'],
+            'top5': kwargs['top5'],
+            'epoch': epoch}))
+        # Keep perf_scores_history sorted from best to worst
+        self.perf_scores_history.sort(
+            key=operator.attrgetter('top1', 'top5', 'params_nnz_cnt', 'epoch'),
             reverse=True)
