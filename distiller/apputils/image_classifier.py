@@ -317,7 +317,7 @@ def init_classifier_compression_arg_parser(include_ptq_lapq_args=False):
                         help='physically remove zero-filters and create a smaller model')
     parser.add_argument('--nesterov', dest='nesterov', action='store_true', default=False,
                         help='use Nesterov momentum for SGD')
-    parser.add_argument('--prioritizeAccuracy', dest='nesterov', action='store_true', default=False,
+    parser.add_argument('--prioritizeAccuracy', dest='prioritizeAccuracy', action='store_true', default=False,
                         help='prioritize accuracy over sparsity for performance tracking')
     distiller.quantization.add_post_train_quant_args(parser, add_lapq_args=include_ptq_lapq_args)
     return parser
