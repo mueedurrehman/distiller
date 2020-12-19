@@ -1,0 +1,19 @@
+quantizers:
+  linear_quantizer:
+    class: PostTrainLinearQuantizer
+    bits_activations: 4
+    bits_parameters: 4
+    bits_accum: 32
+    mode: 'ASYMMETRIC_UNSIGNED'  # Can try "SYMMETRIC" as well
+    # ema_decay: 0.999   # Decay value for exponential moving average tracking of activation ranges
+    per_channel_wts: True
+    clip_acts: AVG
+    model_activation_stats: /content/drive/MyDrive/Colab Notebooks/6787 Notebooks/Google Colab Scripts/Schedules/Quantization Schedules/acts_quantization_stats.yaml
+policies:
+    - quantizer:
+        instance_name: linear_quantizer
+      # For now putting a large range here, which should cover both training from scratch or resuming from some
+      # pre-trained checkpoint at some unknown epoch
+      starting_epoch: 0
+      ending_epoch: 300
+      frequency: 1

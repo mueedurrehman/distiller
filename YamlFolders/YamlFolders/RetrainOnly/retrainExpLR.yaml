@@ -1,0 +1,11 @@
+lr_schedulers:
+   pruning_lr:
+     class: ExponentialLR
+     gamma: 0.9
+
+policies:
+  - lr_scheduler:
+      instance_name: pruning_lr
+    starting_epoch: 1
+    ending_epoch: 80
+    frequency: 1

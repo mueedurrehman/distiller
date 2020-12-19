@@ -1,0 +1,80 @@
+version: 1
+pruners:
+  pruner1:
+    class: SensitivityPruner
+    sensitivities:
+      'module.conv1.weight': 0.62
+      'module.layer1.0.conv1.weight': 0.67
+      'module.layer1.0.conv2.weight': 0.82
+      'module.layer1.1.conv1.weight': 0.57
+      'module.layer1.1.conv2.weight': 0.72
+      'module.layer1.2.conv1.weight': 0.62
+      'module.layer1.2.conv2.weight': 0.88
+      'module.layer1.3.conv1.weight': 0.77
+      'module.layer1.3.conv2.weight': 0.93
+      'module.layer1.4.conv1.weight': 0.51
+      'module.layer1.4.conv2.weight': 0.88
+      'module.layer1.5.conv1.weight': 0.57
+      'module.layer1.5.conv2.weight': 0.77
+      'module.layer1.6.conv1.weight': 0.62
+      'module.layer1.6.conv2.weight': 0.57
+      'module.layer1.7.conv1.weight': 0.46
+      'module.layer1.7.conv2.weight': 0.51
+      'module.layer1.8.conv1.weight': 0.46
+      'module.layer1.8.conv2.weight': 0.36
+      'module.layer2.0.conv1.weight': 0.21
+      'module.layer2.0.conv2.weight': 0.41
+      'module.layer2.0.downsample.0.weight': 0.15
+      'module.layer2.1.conv1.weight': 0.57
+      'module.layer2.1.conv2.weight': 0.51
+      'module.layer2.2.conv1.weight': 0.26
+      'module.layer2.2.conv2.weight': 0.72
+      'module.layer2.3.conv1.weight': 0.31
+      'module.layer2.3.conv2.weight': 0.51
+      'module.layer2.4.conv1.weight': 0.15
+      'module.layer2.4.conv2.weight': 0.57
+      'module.layer2.5.conv1.weight': 0.21
+      'module.layer2.5.conv2.weight': 0.46
+      'module.layer2.6.conv1.weight': 0.31
+      'module.layer2.6.conv2.weight': 0.62
+      'module.layer2.7.conv1.weight': 0.36
+      'module.layer2.7.conv2.weight': 0.51
+      'module.layer2.8.conv1.weight': 0.26
+      'module.layer2.8.conv2.weight': 0.67
+      'module.layer3.0.conv1.weight': 0.21
+      'module.layer3.0.conv2.weight': 0.57
+      'module.layer3.0.downsample.0.weight': 0.36
+      'module.layer3.1.conv1.weight': 0.36
+      'module.layer3.1.conv2.weight': 0.41
+      'module.layer3.2.conv1.weight': 0.72
+      'module.layer3.2.conv2.weight': 0.88
+      'module.layer3.3.conv1.weight': 0.41
+      'module.layer3.3.conv2.weight': 0.67
+      'module.layer3.4.conv1.weight': 0.67
+      'module.layer3.4.conv2.weight': 0.67
+      'module.layer3.5.conv1.weight': 0.57
+      'module.layer3.5.conv2.weight': 0.82
+      'module.layer3.6.conv1.weight': 0.41
+      'module.layer3.6.conv2.weight': 0.62
+      'module.layer3.7.conv1.weight': 0.1
+      'module.layer3.7.conv2.weight': 0.77
+      'module.layer3.8.conv1.weight': 0.57
+      'module.layer3.8.conv2.weight': 0.51
+      'module.fc.weight': 0.36
+
+lr_schedulers:
+   phase_lr:
+     class: ExponentialLR
+     gamma: 0.95
+
+policies:
+  - pruner:
+      instance_name : 'pruner1'
+    starting_epoch: 0
+    ending_epoch:  82
+    frequency: 2
+  - lr_scheduler:
+      instance_name: phase_lr
+    starting_epoch: 0
+    ending_epoch: 82
+    frequency: 1
